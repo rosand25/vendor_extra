@@ -1,0 +1,30 @@
+From bfa6cbfe0e972a90f000a9ca819c40734864e674 Mon Sep 17 00:00:00 2001
+From: sub77 <darfpunk@gmx.de>
+Date: Tue, 20 Dec 2016 12:35:33 +0000
+Subject: [PATCH] Add time to buildname
+
+Change-Id: Ia475f72076e73d1ce06e0977187c691ffc56fa07
+Signed-off-by: sub77 <darfpunk@gmx.de>
+---
+ config/version.mk | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/config/version.mk b/config/version.mk
+index 48f4ac5..b1f384d 100644
+--- a/config/version.mk
++++ b/config/version.mk
+@@ -12,9 +12,9 @@ ifdef BUILDTYPE_RELEASE
+     ROM_VERSION := $(PLATFORM_VERSION)-$(TARGET_PRODUCT_SHORT)
+ else
+ ifeq ($(ROM_BUILDTIME_UTC),y)
+-    ROM_VERSION := $(PLATFORM_VERSION)-$(shell date -u +%Y%m%d)-$(TARGET_PRODUCT_SHORT)-$(ROM_BUILDTYPE)
++    ROM_VERSION := $(PLATFORM_VERSION)-$(shell date -u +%Y%m%d-%H%M)-$(TARGET_PRODUCT_SHORT)-$(ROM_BUILDTYPE)
+ else
+-    ROM_VERSION := $(PLATFORM_VERSION)-$(shell date +%Y%m%d)-$(TARGET_PRODUCT_SHORT)-$(ROM_BUILDTYPE)
++    ROM_VERSION := $(PLATFORM_VERSION)-$(shell date +%Y%m%d-%H%M)-$(TARGET_PRODUCT_SHORT)-$(ROM_BUILDTYPE)
+ endif
+ endif
+ 
+-- 
+2.1.4
+

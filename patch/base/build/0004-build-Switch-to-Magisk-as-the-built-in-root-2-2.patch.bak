@@ -1,0 +1,62 @@
+From 4ae121fef830a73cf3ec04836121cd30a6ab3acc Mon Sep 17 00:00:00 2001
+From: sub77 <sub77@ymail.com>
+Date: Mon, 27 Feb 2017 02:27:34 +0000
+Subject: [PATCH 4/4] build: Switch to Magisk as the built in root [2/2]
+
+Pretty much identical to https://github.com/DirtyUnicorns/android_build/commit/2871a7b10b1ae6b6bdda049e33421ab37057f4d1
+Modified and updated for TWRP 3.0.3-x by @nathanchance
+
+Change-Id: Ic0cc0b6e96723a87298edb5cded9f6ef93c05b9d
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: sub77 <sub77@ymail.com>
+---
+ tools/releasetools/edify_generator.py       | 10 ++++++++++
+ tools/releasetools/ota_from_target_files.py | 11 +++++++++++
+ 2 files changed, 21 insertions(+)
+
+diff --git a/tools/releasetools/edify_generator.py b/tools/releasetools/edify_generator.py
+index f861624e5..5682188dc 100644
+--- a/tools/releasetools/edify_generator.py
++++ b/tools/releasetools/edify_generator.py
+@@ -156,6 +156,16 @@ class EdifyGenerator(object):
+     if command == "restore":
+       self.DeleteFiles(["/tmp/backuptool.functions"])
+ 
++  def FlashMagisk(self):
++    self.script.append('if')
++    self.script.append('    sha1_check(read_file("/sdcard/.omnirom_noroot")) == ""')
++    self.script.append('then')
++    self.script.append('    ui_print("/sdcard/.omnirom_noroot not found");')
++    self.script.append('    package_extract_dir("magisk", "/tmp/magisk");')
++    self.script.append('    run_program("/sbin/busybox", "unzip", "/tmp/magisk/magisk.zip", "META-INF/com/google/android/*", "-d", "/tmp/magisk");')
++    self.script.append('    run_program("/sbin/sh", "/tmp/magisk/META-INF/com/google/android/update-binary", "dummy", "1", "/tmp/magisk/magisk.zip");')
++    self.script.append('endif;')
++
+   def ShowProgress(self, frac, dur):
+     """Update the progress bar, advancing it over 'frac' over the next
+     'dur' seconds.  'dur' may be zero to advance it via SetProgress
+diff --git a/tools/releasetools/ota_from_target_files.py b/tools/releasetools/ota_from_target_files.py
+index eb8a9f8f8..ebd10dbe3 100755
+--- a/tools/releasetools/ota_from_target_files.py
++++ b/tools/releasetools/ota_from_target_files.py
+@@ -755,6 +755,17 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
+   script.Print("Flashing boot.img")
+   script.WriteRawImage("/boot", "boot.img")
+ 
++  script.Print("Flashing Magisk...")
++  script.Print(" ")
++  common.ZipWriteStr(output_zip, "magisk/magisk.zip",
++                 ""+input_zip.read("SYSTEM/addon.d/magisk.zip"))
++  script.FlashMagisk()
++  script.Print(" ")
++  script.ShowProgress(0.2, 10)
++  script.Print("Enjoy OMNI ROM!");
++  device_specific.FullOTA_InstallEnd()
++
++
+   script.ShowProgress(0.2, 10)
+   script.Print("Enjoy OMNI ROM!");
+   device_specific.FullOTA_InstallEnd()
+-- 
+2.11.1
+

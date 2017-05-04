@@ -1,0 +1,178 @@
+From 8321664dbc15460f476e3ba8c91318ea55a6e62b Mon Sep 17 00:00:00 2001
+From: Jorge Ruesga <jorge@ruesga.com>
+Date: Sun, 28 Jun 2015 01:12:46 +0200
+Subject: [PATCH] native: dock battery
+
+Change-Id: I23eadf0361cbe25029b95dbd022ce1a2cc96e94d
+Require: topic:dock_battery
+Signed-off-by: Jorge Ruesga <jorge@ruesga.com>
+Signed-off-by: sub77 <sub77@ymail.com>
+---
+ include/batteryservice/BatteryService.h            | 11 +++++++
+ .../batteryservice/IBatteryPropertiesRegistrar.h   |  3 ++
+ services/batteryservice/BatteryProperties.cpp      | 34 ++++++++++++++++++++++
+ .../batteryservice/IBatteryPropertiesRegistrar.cpp | 28 ++++++++++++++++++
+ 4 files changed, 76 insertions(+)
+
+diff --git a/include/batteryservice/BatteryService.h b/include/batteryservice/BatteryService.h
+index b3999058b..50a01ba6d 100644
+--- a/include/batteryservice/BatteryService.h
++++ b/include/batteryservice/BatteryService.h
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (C) 2013 The Android Open Source Project
++ * Copyright (C) 2015 The CyanogenMod Project
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+@@ -71,6 +72,16 @@ struct BatteryProperties {
+     int batteryChargeCounter;
+     String8 batteryTechnology;
+ 
++    bool dockBatterySupported;
++    bool chargerDockAcOnline;
++    int dockBatteryStatus;
++    int dockBatteryHealth;
++    bool dockBatteryPresent;
++    int dockBatteryLevel;
++    int dockBatteryVoltage;
++    int dockBatteryTemperature;
++    String8 dockBatteryTechnology;
++
+     status_t writeToParcel(Parcel* parcel) const;
+     status_t readFromParcel(Parcel* parcel);
+ };
+diff --git a/include/batteryservice/IBatteryPropertiesRegistrar.h b/include/batteryservice/IBatteryPropertiesRegistrar.h
+index eca075d7e..f6a7981d5 100644
+--- a/include/batteryservice/IBatteryPropertiesRegistrar.h
++++ b/include/batteryservice/IBatteryPropertiesRegistrar.h
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (C) 2013 The Android Open Source Project
++ * Copyright (C) 2015 The CyanogenMod Project
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+@@ -27,6 +28,7 @@ enum {
+     REGISTER_LISTENER = IBinder::FIRST_CALL_TRANSACTION,
+     UNREGISTER_LISTENER,
+     GET_PROPERTY,
++    GET_DOCK_PROPERTY,
+ };
+ 
+ class IBatteryPropertiesRegistrar : public IInterface {
+@@ -36,6 +38,7 @@ public:
+     virtual void registerListener(const sp<IBatteryPropertiesListener>& listener) = 0;
+     virtual void unregisterListener(const sp<IBatteryPropertiesListener>& listener) = 0;
+     virtual status_t getProperty(int id, struct BatteryProperty *val) = 0;
++    virtual status_t getDockProperty(int id, struct BatteryProperty *val) = 0;
+ };
+ 
+ class BnBatteryPropertiesRegistrar : public BnInterface<IBatteryPropertiesRegistrar> {
+diff --git a/services/batteryservice/BatteryProperties.cpp b/services/batteryservice/BatteryProperties.cpp
+index d89d4c98f..98269a373 100644
+--- a/services/batteryservice/BatteryProperties.cpp
++++ b/services/batteryservice/BatteryProperties.cpp
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (C) 2013 The Android Open Source Project
++ * Copyright (C) 2015 The CyanogenMod Project
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+@@ -43,6 +44,27 @@ status_t BatteryProperties::readFromParcel(Parcel* p) {
+     batteryTemperature = p->readInt32();
+     batteryChargeCounter = p->readInt32();
+     batteryTechnology = String8((p->readString16()).string());
++
++    dockBatterySupported = p->readInt32() == 1 ? true : false;
++    if (dockBatterySupported) {
++        chargerDockAcOnline = p->readInt32() == 1 ? true : false;
++        dockBatteryStatus = p->readInt32();
++        dockBatteryHealth = p->readInt32();
++        dockBatteryPresent = p->readInt32() == 1 ? true : false;
++        dockBatteryLevel = p->readInt32();
++        dockBatteryVoltage = p->readInt32();
++        dockBatteryTemperature = p->readInt32();
++        dockBatteryTechnology = String8((p->readString16()).string());
++    } else {
++        chargerDockAcOnline = false;
++        dockBatteryStatus = BATTERY_STATUS_UNKNOWN;
++        dockBatteryHealth = BATTERY_HEALTH_UNKNOWN;
++        dockBatteryPresent = false;
++        dockBatteryLevel = 0;
++        dockBatteryVoltage = 0;
++        dockBatteryTemperature = 0;
++        dockBatteryTechnology = String8(String8::kEmptyString);
++    }
+     return OK;
+ }
+ 
+@@ -60,6 +82,18 @@ status_t BatteryProperties::writeToParcel(Parcel* p) const {
+     p->writeInt32(batteryTemperature);
+     p->writeInt32(batteryChargeCounter);
+     p->writeString16(String16(batteryTechnology));
++
++    p->writeInt32(dockBatterySupported ? 1 : 0);
++    if (dockBatterySupported) {
++        p->writeInt32(chargerDockAcOnline ? 1 : 0);
++        p->writeInt32(dockBatteryStatus);
++        p->writeInt32(dockBatteryHealth);
++        p->writeInt32(dockBatteryPresent ? 1 : 0);
++        p->writeInt32(dockBatteryLevel);
++        p->writeInt32(dockBatteryVoltage);
++        p->writeInt32(dockBatteryTemperature);
++        p->writeString16(String16(dockBatteryTechnology));
++    }
+     return OK;
+ }
+ 
+diff --git a/services/batteryservice/IBatteryPropertiesRegistrar.cpp b/services/batteryservice/IBatteryPropertiesRegistrar.cpp
+index 46934e04e..e18e39c09 100644
+--- a/services/batteryservice/IBatteryPropertiesRegistrar.cpp
++++ b/services/batteryservice/IBatteryPropertiesRegistrar.cpp
+@@ -60,6 +60,22 @@ public:
+                 val->readFromParcel(&reply);
+             return ret;
+         }
++
++        status_t getDockProperty(int id, struct BatteryProperty *val) {
++            Parcel data, reply;
++            data.writeInterfaceToken(IBatteryPropertiesRegistrar::getInterfaceDescriptor());
++            data.writeInt32(id);
++            remote()->transact(GET_DOCK_PROPERTY, data, &reply);
++            int32_t ret = reply.readExceptionCode();
++            if (ret != 0) {
++                return ret;
++            }
++            ret = reply.readInt32();
++            int parcelpresent = reply.readInt32();
++            if (parcelpresent)
++                val->readFromParcel(&reply);
++            return ret;
++        }
+ };
+ 
+ IMPLEMENT_META_INTERFACE(BatteryPropertiesRegistrar, "android.os.IBatteryPropertiesRegistrar");
+@@ -97,6 +113,18 @@ status_t BnBatteryPropertiesRegistrar::onTransact(uint32_t code,
+             val.writeToParcel(reply);
+             return OK;
+         }
++
++        case GET_DOCK_PROPERTY: {
++            CHECK_INTERFACE(IBatteryPropertiesRegistrar, data, reply);
++            int id = data.readInt32();
++            struct BatteryProperty val;
++            status_t result = getDockProperty(id, &val);
++            reply->writeNoException();
++            reply->writeInt32(result);
++            reply->writeInt32(1);
++            val.writeToParcel(reply);
++            return OK;
++        }
+     }
+     return BBinder::onTransact(code, data, reply, flags);
+ };
+-- 
+2.11.1
+

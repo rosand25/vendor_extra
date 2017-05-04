@@ -1,0 +1,16 @@
+#!/system/bin/sh
+
+# linking hostkeys
+mkdir -p /etc/dropbear
+ln -sf /persist/etc/dropbear_dss_host_key /etc/dropbear/dropbear_dss_host_key
+ln -sf /persist/etc/dropbear_rsa_host_key /etc/dropbear/dropbear_rsa_host_key
+
+# checking sftp-server & dropbear
+chmod 755 /persist/bin/sftp-server
+chmod 755 /persist/exbin/dropbearmulti
+
+# starting dropbear
+./persist/exbin/dropbear -A -N root -R /persist/.ssh/gce.pub
+
+# wakelock
+./persist/xbin/dropbear_wakelock > /dev/null 2>&1 &

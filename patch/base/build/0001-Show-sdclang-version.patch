@@ -1,0 +1,29 @@
+From bd32803076aa2826389e6f10b1ed16282bff0281 Mon Sep 17 00:00:00 2001
+From: sub77 <sub77@ymail.com>
+Date: Sat, 18 Mar 2017 13:21:47 +0000
+Subject: [PATCH 1/5] Show sdclang version
+
+Change-Id: Id71b7a93a7e5e0318a44ae771f3e0004ccf28cf2
+---
+ core/dumpvar.mk | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/core/dumpvar.mk b/core/dumpvar.mk
+index 1bd477765..17a526075 100644
+--- a/core/dumpvar.mk
++++ b/core/dumpvar.mk
+@@ -30,6 +30,11 @@ print_build_config_vars += \
+   PDK_FUSION_PLATFORM_ZIP
+ endif
+ 
++ifeq ($(TARGET_USE_SDCLANG),true)
++print_build_config_vars += \
++  SDCLANG_VERSION
++endif
++
+ # ---------------------------------------------------------------
+ # the setpath shell function in envsetup.sh uses this to figure out
+ # what to add to the path given the config we have chosen.
+-- 
+2.12.0
+

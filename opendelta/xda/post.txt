@@ -1,0 +1,21 @@
+[B]Update[/B]
+
+[BB]  [URL="down"] omni-7.1.2-20170415-1752-falcon-HOMEMADE.zip [/URL] -> DOWN - NO OTA UPDATE
+
+[AFH] [URL="https://www.androidfilehost.com/?fid=AFHFILE"] omni-7.1.1-20170331-1410-falcon-HOMEMADE.zip [/URL]
+
+[NOTES]
+
+* rom is rootless by default
+
+* to install magisk:
+  # adb shell "echo -e 'ro.sub.magisk=1 \nro.sub.supersu=0 \nro.sub.superuser=0' > /sdcard/omnirom.prop"
+
+* to install supersu:
+  # adb shell "echo -e 'ro.sub.magisk=0 \nro.sub.supersu=1 \nro.sub.superuser=0' > /sdcard/omnirom.prop"
+
+* to install phh's superuser:
+  # adb shell "echo -e 'ro.sub.magisk=0 \nro.sub.supersu=0 \nro.sub.superuser=1' > /sdcard/omnirom.prop"
+
+* to make settings persistent:
+  # adb shell "su -c 'cp /sdcard/omnirom.prop /persist/omnirom.prop'"

@@ -1,0 +1,27 @@
+From ebabb27a20ccc41a4c15831c78e77e72baa92126 Mon Sep 17 00:00:00 2001
+From: sub77 <darfpunk@gmx.de>
+Date: Fri, 23 Dec 2016 22:45:30 +0000
+Subject: [PATCH 3/5] custom roomservice.py
+
+Change-Id: Ia9de485aa5fee3e1896ffe73bf5dc139324a89bc
+Signed-off-by: sub77 <darfpunk@gmx.de>
+---
+ tools/roomservice.py | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/tools/roomservice.py b/tools/roomservice.py
+index fe5ff49a3..91ea5e8fc 100755
+--- a/tools/roomservice.py
++++ b/tools/roomservice.py
+@@ -179,6 +179,8 @@ def write_to_manifest(manifest):
+     with open('/'.join([local_manifest_dir, "roomservice.xml"]), 'w') as f:
+         f.write(raw_xml)
+     print("wrote the new roomservice manifest")
++    os.system("sed -i '/%s/d' .repo/local_manifests/roomservice.xml" % device)
++    print("updated the new roomservice manifest")
+ 
+ 
+ def parse_device_from_manifest(device):
+-- 
+2.12.0
+

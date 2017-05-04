@@ -1,0 +1,66 @@
+From 9a13b646c2cf90048d55a34101f3597584552910 Mon Sep 17 00:00:00 2001
+From: sub77 <sub77@ymail.com>
+Date: Sat, 15 Apr 2017 10:37:15 +0000
+Subject: [PATCH] SystemUI: Add config to disable HumanInteractionClassifier
+
+Change-Id: Ibc788c7933341bb5903e8ad5975c8faf4c7f8f0b
+---
+ core/res/res/values/config.xml                                     | 3 +++
+ core/res/res/values/custom_symbols.xml                             | 3 +++
+ .../android/systemui/classifier/HumanInteractionClassifier.java    | 7 +++----
+ 3 files changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/core/res/res/values/config.xml b/core/res/res/values/config.xml
+index 7c2b65b0d6f..23e5482b7be 100644
+--- a/core/res/res/values/config.xml
++++ b/core/res/res/values/config.xml
+@@ -2719,4 +2719,7 @@
+          is installed. -->
+     <bool name="config_permissionReviewRequired">false</bool>
+ 
++    <!-- Whether to enable HumanInteractionController by default -->
++    <bool name="config_HICEnabledDefault">true</bool>
++
+ </resources>
+diff --git a/core/res/res/values/custom_symbols.xml b/core/res/res/values/custom_symbols.xml
+index f320c0a0957..b561abe4f7e 100644
+--- a/core/res/res/values/custom_symbols.xml
++++ b/core/res/res/values/custom_symbols.xml
+@@ -129,4 +129,7 @@
+   <java-symbol type="string" name="operator_config_url" />
+   <java-symbol type="string" name="operator_ping_url" />
+   <java-symbol type="bool" name="config_zero_balance_operator"/>
++
++  <!-- Whether to enable HumanInteractionController by default -->
++  <java-symbol type="bool" name="config_HICEnabledDefault" />
+ </resources>
+diff --git a/packages/SystemUI/src/com/android/systemui/classifier/HumanInteractionClassifier.java b/packages/SystemUI/src/com/android/systemui/classifier/HumanInteractionClassifier.java
+index 851ab771882..fe615f9105c 100644
+--- a/packages/SystemUI/src/com/android/systemui/classifier/HumanInteractionClassifier.java
++++ b/packages/SystemUI/src/com/android/systemui/classifier/HumanInteractionClassifier.java
+@@ -36,9 +36,6 @@ public class HumanInteractionClassifier extends Classifier {
+     private static final String HIC_ENABLE = "HIC_enable";
+     private static final float FINGER_DISTANCE = 0.1f;
+ 
+-    /** Default value for the HIC_ENABLE setting: 1 - enabled, 0 - disabled */
+-    private static final int HIC_ENABLE_DEFAULT = 1;
+-
+     private static HumanInteractionClassifier sInstance = null;
+ 
+     private final Handler mHandler = new Handler();
+@@ -105,9 +102,11 @@ public class HumanInteractionClassifier extends Classifier {
+     }
+ 
+     private void updateConfiguration() {
++        boolean enabledDefault = mContext.getResources()
++                .getBoolean(com.android.internal.R.bool.config_HICEnabledDefault);
+         mEnableClassifier = 0 != Settings.Global.getInt(
+                 mContext.getContentResolver(),
+-                HIC_ENABLE, HIC_ENABLE_DEFAULT);
++                HIC_ENABLE, enabledDefault ? 1 : 0);
+     }
+ 
+     public void setType(int type) {
+-- 
+2.12.2
+

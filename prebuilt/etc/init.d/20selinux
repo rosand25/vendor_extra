@@ -1,0 +1,21 @@
+#/system/bin/sh
+
+which su &>/dev/null
+
+if [ $? = 0 ]; then
+    log -p i -t init.d "SU available"
+else
+    log -p i -t init.d "SU needed to change selinux mode"
+fi
+
+# Enforcing
+if [[ -f /data/media/0/.omnirom_enforcing || -f /sdcard/.omnirom_enforcing ]]; then
+    log -p i -t init.d "Selinux Enforcing -> /sdcard/.omnirom_enforcing"
+    su 0 setenforce 1
+fi
+
+# Permissive
+if [[ -f /data/media/0/.omnirom_permissive || -f /sdcard/.omnirom_permissive ]]; then
+    log -p i -t init.d "Selinux Permissive -> /sdcard/.omnirom_permissive"
+    su 0 setenforce 0
+fi

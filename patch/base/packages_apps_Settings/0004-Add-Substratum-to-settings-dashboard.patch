@@ -1,0 +1,148 @@
+From 0074f9560222d46099ed776ff5cfd3d51eb77d09 Mon Sep 17 00:00:00 2001
+From: sub77 <sub77@ymail.com>
+Date: Sun, 2 Apr 2017 00:39:30 +0000
+Subject: [PATCH 4/4] Add Substratum to settings dashboard
+---
+ AndroidManifest.xml                            | 20 ++++++++++++++++++++
+ res/drawable/ic_settings_substratum.xml        | 26 ++++++++++++++++++++++++++
+ res/values/custom_strings.xml                  |  4 ++++
+ src/com/android/settings/Settings.java         |  3 +++
+ src/com/android/settings/SettingsActivity.java | 19 +++++++++++++++++++
+ 5 files changed, 72 insertions(+)
+ create mode 100644 res/drawable/ic_settings_substratum.xml
+
+diff --git a/AndroidManifest.xml b/AndroidManifest.xml
+index 339cca1af7..b0a40e1959 100644
+--- a/AndroidManifest.xml
++++ b/AndroidManifest.xml
+@@ -2032,6 +2032,26 @@
+                 android:value="true" />
+         </activity>
+ 
++        <activity android:name="Settings$SubstratumActivity"
++            android:label="@string/substratum_title"
++            android:icon="@drawable/ic_settings_substratum"
++            android:taskAffinity="">
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.DEFAULT" />
++                <category android:name="com.android.settings.SHORTCUT" />
++            </intent-filter>
++            <intent-filter android:priority="0">
++                <action android:name="com.android.settings.action.SETTINGS" />
++            </intent-filter>
++            <meta-data android:name="com.android.settings.category"
++                android:value="com.android.settings.category.system" />
++            <meta-data android:name="com.android.settings.FRAGMENT_CLASS"
++                android:value="com.android.settings.Substratum" />
++            <meta-data android:name="com.android.settings.summary"
++                android:resource="@string/substratum_summary" />
++        </activity>
++
+         <activity android:name="Settings$PrintSettingsActivity"
+                 android:label="@string/print_settings"
+                 android:icon="@drawable/ic_settings_print"
+diff --git a/res/drawable/ic_settings_substratum.xml b/res/drawable/ic_settings_substratum.xml
+new file mode 100644
+index 0000000000..64288bed20
+--- /dev/null
++++ b/res/drawable/ic_settings_substratum.xml
+@@ -0,0 +1,26 @@
++<?xml version="1.0" encoding="utf-8"?>
++<!--
++    Copyright (c) 2016 Project Substratum
++
++    Licensed under the Apache License, Version 2.0 (the "License");
++    you may not use this file except in compliance with the License.
++    You may obtain a copy of the License at
++
++        http://www.apache.org/licenses/LICENSE-2.0
++
++    Unless required by applicable law or agreed to in writing, software
++    distributed under the License is distributed on an "AS IS" BASIS,
++    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++    See the License for the specific language governing permissions and
++    limitations under the License.
++-->
++
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++        android:width="24dp"
++        android:height="24dp"
++        android:viewportHeight="24"
++        android:viewportWidth="24">
++    <path
++        android:fillColor="?android:attr/colorAccent"
++        android:pathData="M20.71,4.63L19.37,3.29C19,2.9 18.35,2.9 17.96,3.29L9,12.25L11.75,15L20.71,6.04C21.1,5.65 21.1,5 20.71,4.63M7,14A3,3 0 0,0 4,17C4,18.31 2.84,19 2,19C2.92,20.22 4.5,21 6,21A4,4 0 0,0 10,17A3,3 0 0,0 7,14Z"/>
++</vector>
+diff --git a/res/values/custom_strings.xml b/res/values/custom_strings.xml
+index 01efa9797d..b055dd6bc0 100644
+--- a/res/values/custom_strings.xml
++++ b/res/values/custom_strings.xml
+@@ -127,4 +127,8 @@
+     <string name="changelog_title">Changelog</string>
+     <string name="changelog_summary">View recent changes in ROM</string>
+     <string name="changelog_error">Unable to load changelog</string>
++
++    <!-- Substratum -->
++    <string name="substratum_title">Substratum</string>
++    <string name="substratum_summary">Manage System Themes</string>
+ </resources>
+diff --git a/src/com/android/settings/Settings.java b/src/com/android/settings/Settings.java
+index f6d7282742..a8a107cde0 100644
+--- a/src/com/android/settings/Settings.java
++++ b/src/com/android/settings/Settings.java
+@@ -173,4 +173,7 @@ public class Settings extends SettingsActivity {
+     public static class DevicePartsActivity extends SettingsActivity { /* empty */ }
+     public static class OmniJawsSettingsActivity extends SettingsActivity { /* empty */ }
+ 
++    // Substratum
++    public static class SubstratumActivity extends SettingsActivity { /* empty */ }
++
+ }
+diff --git a/src/com/android/settings/SettingsActivity.java b/src/com/android/settings/SettingsActivity.java
+index c8523e63b0..4f956c96af 100644
+--- a/src/com/android/settings/SettingsActivity.java
++++ b/src/com/android/settings/SettingsActivity.java
+@@ -243,6 +243,8 @@ public class SettingsActivity extends SettingsDrawerActivity
+     public static final String KEY_COLUMNS_COUNT = "columns_count";
+     public static final String APP_PREFERENCES_NAME = "app_settings";
+ 
++    private static final String SUBSTRATUM_FRAGMENT = "com.android.settings.Substratum";
++
+     private String mFragmentClass;
+ 
+     private CharSequence mInitialTitle;
+@@ -1070,6 +1072,13 @@ public class SettingsActivity extends SettingsDrawerActivity
+             finish();
+             return null;
+         }
++        if (SUBSTRATUM_FRAGMENT.equals(fragmentName)) {
++            Intent subIntent = new Intent();
++            subIntent.setClassName("projekt.substratum", "projekt.substratum.LaunchActivity");
++            startActivity(subIntent);
++            finish();
++            return null;
++        }
+         if (DEVICE_PARTS_FRAGMENT.equals(fragmentName)) {
+             Intent devicePartsIntent = new Intent();
+             devicePartsIntent.setClassName("org.omnirom.device", "org.omnirom.device.DeviceSettings");
+@@ -1197,6 +1206,16 @@ public class SettingsActivity extends SettingsDrawerActivity
+                         Settings.MagiskActivity.class.getName()),
+                 magSupported, isAdmin, pm);
+ 
++        // Substratum
++        boolean subSupported = false;
++        try {
++            subSupported = (getPackageManager().getPackageInfo("projekt.substratum", 0).versionCode > 0);
++        } catch (PackageManager.NameNotFoundException e) {
++        }
++        setTileEnabled(new ComponentName(packageName,
++                        Settings.SubstratumActivity.class.getName()),
++                subSupported, isAdmin, pm);
++
+         // Omni DeviceParts
+         boolean devicePartsSupported = false;
+         try {
+-- 
+2.12.2
+

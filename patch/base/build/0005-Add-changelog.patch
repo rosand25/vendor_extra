@@ -1,0 +1,26 @@
+From a2d5f38bef445c5b48a6ce02fa54e8c7e3e4fb8a Mon Sep 17 00:00:00 2001
+From: sub77 <sub77@ymail.com>
+Date: Fri, 31 Mar 2017 14:05:48 +0000
+Subject: [PATCH 5/5] Add changelog
+
+Change-Id: If600434072880f1c7e7c000f07a424d3e0135a8b
+---
+ core/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/core/Makefile b/core/Makefile
+index e30b6d34d..4d0650773 100644
+--- a/core/Makefile
++++ b/core/Makefile
+@@ -1170,6 +1170,8 @@ FULL_SYSTEMIMAGE_DEPS := $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_USERIMAGES_DEP
+ # system image.
+ INSTALLED_FILES_FILE := $(PRODUCT_OUT)/installed-files.txt
+ $(INSTALLED_FILES_FILE): $(FULL_SYSTEMIMAGE_DEPS)
++	$(hide) ./vendor/extra/tools/changelog
++	$(hide) mv $(PRODUCT_OUT)/Changelog.txt $(PRODUCT_OUT)/$(TARGET_PRODUCT)-$(BUILD_ID)-$(shell date -u +%Y%m%d)-Changelog.txt
+ 	@echo Installed file list: $@
+ 	@mkdir -p $(dir $@)
+ 	@rm -f $@
+-- 
+2.12.0
+

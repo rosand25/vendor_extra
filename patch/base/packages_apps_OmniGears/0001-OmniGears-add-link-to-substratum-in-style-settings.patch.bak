@@ -1,0 +1,47 @@
+From 9eb689a5b07389e7e130ce21c89cf4f981206776 Mon Sep 17 00:00:00 2001
+From: sub77 <sub77@ymail.com>
+Date: Sat, 4 Mar 2017 12:27:23 +0000
+Subject: [PATCH] OmniGears: add link to substratum in style settings
+
+Change-Id: I8477e2246fe584f36d6cf613a24f228476581b3d
+---
+ res/values/custom_strings.xml | 4 ++++
+ res/xml/style_settings.xml    | 9 +++++++++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/res/values/custom_strings.xml b/res/values/custom_strings.xml
+index 0ce611b..71a816d 100644
+--- a/res/values/custom_strings.xml
++++ b/res/values/custom_strings.xml
+@@ -497,4 +497,8 @@
+ 
+     <string name="lockscreen_hide_status_bar_title">Hide status bar</string>
+     <string name="lockscreen_hide_status_bar_summary">Touch status bar to toggle visibility</string>
++
++    <!-- Substratum -->
++    <string name="substratum_title">Substratum</string>
++    <string name="substratum_summary"></string>
+ </resources>
+diff --git a/res/xml/style_settings.xml b/res/xml/style_settings.xml
+index 3f55725..77c2691 100644
+--- a/res/xml/style_settings.xml
++++ b/res/xml/style_settings.xml
+@@ -35,6 +35,15 @@
+                     android:targetClass="org.omnirom.omnistyle.BrowseWallsActivity" />
+             </PreferenceScreen>
+ 
++        <PreferenceScreen
++            android:key="substratum"
++            android:title="@string/substratum_title"
++            android:summary="@string/substratum_summary"
++            android:persistent="false" >
++            <intent android:action="android.intent.action.MAIN"
++                    android:targetPackage="projekt.substratum" />
++            </PreferenceScreen>
++
+         <PreferenceCategory
+             android:key="category_statusbar"
+             android:title="@string/statusbar_title">
+-- 
+2.11.1
+

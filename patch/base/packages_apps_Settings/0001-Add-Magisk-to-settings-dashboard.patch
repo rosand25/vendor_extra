@@ -1,0 +1,144 @@
+From 1add926e3046430d31ac4cbbc1a10dd9cc550b34 Mon Sep 17 00:00:00 2001
+From: sub77 <sub77@ymail.com>
+Date: Fri, 10 Mar 2017 18:07:57 +0000
+Subject: [PATCH 1/4] Add Magisk to settings dashboard
+---
+ AndroidManifest.xml                            | 21 +++++++++++++++++++++
+ res/drawable/ic_settings_magisk.xml            | 23 +++++++++++++++++++++++
+ res/values/custom_strings.xml                  |  1 +
+ src/com/android/settings/Settings.java         |  1 +
+ src/com/android/settings/SettingsActivity.java | 18 ++++++++++++++++++
+ 5 files changed, 64 insertions(+)
+ create mode 100644 res/drawable/ic_settings_magisk.xml
+
+diff --git a/AndroidManifest.xml b/AndroidManifest.xml
+index 7bab915901..339cca1af7 100644
+--- a/AndroidManifest.xml
++++ b/AndroidManifest.xml
+@@ -2011,6 +2011,27 @@
+                 android:resource="@string/su_dashboard_summary" />
+         </activity>
+ 
++        <activity android:name="Settings$MagiskActivity"
++            android:label="@string/magisk_title"
++            android:icon="@drawable/ic_settings_magisk"
++            android:taskAffinity="">
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.DEFAULT" />
++                <category android:name="android.intent.category.VOICE_LAUNCH" />
++                <category android:name="com.android.settings.SHORTCUT" />
++            </intent-filter>
++            <intent-filter android:priority="2">
++                <action android:name="com.android.settings.action.SETTINGS" />
++            </intent-filter>
++            <meta-data android:name="com.android.settings.category"
++                android:value="com.android.settings.category.system" />
++            <meta-data android:name="com.android.settings.FRAGMENT_CLASS"
++                android:value="com.android.settings.Magisk" />
++            <meta-data android:name="com.android.settings.PRIMARY_PROFILE_CONTROLLED"
++                android:value="true" />
++        </activity>
++
+         <activity android:name="Settings$PrintSettingsActivity"
+                 android:label="@string/print_settings"
+                 android:icon="@drawable/ic_settings_print"
+diff --git a/res/drawable/ic_settings_magisk.xml b/res/drawable/ic_settings_magisk.xml
+new file mode 100644
+index 0000000000..fdd58540d2
+--- /dev/null
++++ b/res/drawable/ic_settings_magisk.xml
+@@ -0,0 +1,23 @@
++<?xml version="1.0" encoding="utf-8"?>
++<!-- Copyright (C) 2015 The Pure Nexus Project
++
++     Licensed under the Apache License, Version 2.0 (the "License");
++     you may not use this file except in compliance with the License.
++     You may obtain a copy of the License at
++
++          http://www.apache.org/licenses/LICENSE-2.0
++
++     Unless required by applicable law or agreed to in writing, software
++     distributed under the License is distributed on an "AS IS" BASIS,
++     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++     See the License for the specific language governing permissions and
++     limitations under the License.
++-->
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:height="24dp"
++    android:width="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24"
++    android:tint="?android:attr/colorAccent">
++    <path android:fillColor="#FFFFFFFF" android:pathData="M5.41,21L6.12,17H2.12L2.47,15H6.47L7.53,9H3.53L3.88,7H7.88L8.59,3H10.59L9.88,7H15.88L16.59,3H18.59L17.88,7H21.88L21.53,9H17.53L16.47,15H20.47L20.12,17H16.12L15.41,21H13.41L14.12,17H8.12L7.41,21H5.41M9.53,9L8.47,15H14.47L15.53,9H9.53Z" />
++</vector>
+diff --git a/res/values/custom_strings.xml b/res/values/custom_strings.xml
+index afabf6dd34..db9b250aa1 100644
+--- a/res/values/custom_strings.xml
++++ b/res/values/custom_strings.xml
+@@ -35,6 +35,7 @@
+     <string name="supersu_title">SuperSU</string>
+     <string name="su_dashboard_summary">Manage root access</string>
+     <string name="superuser_title">Superuser</string>
++    <string name="magisk_title">Magisk</string>
+     <string name="interface_style_title">Style</string>
+ 
+     <!-- Setting checkbox summary for displaying USB debugging notification -->
+diff --git a/src/com/android/settings/Settings.java b/src/com/android/settings/Settings.java
+index d2e20872f9..f6d7282742 100644
+--- a/src/com/android/settings/Settings.java
++++ b/src/com/android/settings/Settings.java
+@@ -169,6 +169,7 @@ public class Settings extends SettingsActivity {
+ 
+     public static class SuperSUActivity extends SettingsActivity { /* empty */ }
+     public static class SuperUserActivity extends SettingsActivity { /* empty */ }
++    public static class MagiskActivity extends SettingsActivity { /* empty */ }
+     public static class DevicePartsActivity extends SettingsActivity { /* empty */ }
+     public static class OmniJawsSettingsActivity extends SettingsActivity { /* empty */ }
+ 
+diff --git a/src/com/android/settings/SettingsActivity.java b/src/com/android/settings/SettingsActivity.java
+index cee1dbee51..c8523e63b0 100644
+--- a/src/com/android/settings/SettingsActivity.java
++++ b/src/com/android/settings/SettingsActivity.java
+@@ -236,6 +236,7 @@ public class SettingsActivity extends SettingsDrawerActivity
+ 
+     private static final String SUPERSU_FRAGMENT = "com.android.settings.SuperSU";
+     private static final String SUPERUSER_FRAGMENT = "com.android.settings.SuperUser";
++    private static final String MAGISK_FRAGMENT = "com.android.settings.Magisk";
+     private static final String DEVICE_PARTS_FRAGMENT = "org.omnirom.device.DeviceParts";
+ 
+     public static final String KEY_HIDE_SUMMARY = "hide_summary";
+@@ -1062,6 +1063,13 @@ public class SettingsActivity extends SettingsDrawerActivity
+             finish();
+             return null;
+         }
++        if (MAGISK_FRAGMENT.equals(fragmentName)) {
++            Intent magiskIntent = new Intent();
++            magiskIntent.setClassName("com.topjohnwu.magisk", "com.topjohnwu.magisk.SplashActivity");
++            startActivity(magiskIntent);
++            finish();
++            return null;
++        }
+         if (DEVICE_PARTS_FRAGMENT.equals(fragmentName)) {
+             Intent devicePartsIntent = new Intent();
+             devicePartsIntent.setClassName("org.omnirom.device", "org.omnirom.device.DeviceSettings");
+@@ -1179,6 +1187,16 @@ public class SettingsActivity extends SettingsDrawerActivity
+                         Settings.SuperUserActivity.class.getName()),
+                 phhSupported, isAdmin, pm);
+ 
++        // Magisk
++        boolean magSupported = false;
++        try {
++            magSupported = (getPackageManager().getPackageInfo("com.topjohnwu.magisk", 0).versionCode > 0);
++        } catch (PackageManager.NameNotFoundException e) {
++        }
++        setTileEnabled(new ComponentName(packageName,
++                        Settings.MagiskActivity.class.getName()),
++                magSupported, isAdmin, pm);
++
+         // Omni DeviceParts
+         boolean devicePartsSupported = false;
+         try {
+-- 
+2.12.2
+
