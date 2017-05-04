@@ -1,5 +1,5 @@
 ccache_use=1
-ccache_dir=/home/sub77/ccache
+ccache_dir=/home/daniel/ccache
 ccache_size=25G
 java_home=/usr/lib/jvm/java-8-oracle
 rom_type=cm
