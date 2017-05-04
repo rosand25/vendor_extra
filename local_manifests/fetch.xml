@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <!-- Remotes -->
+  <remote name="dan" fetch="ssh://git@github.com" />
+  <!-- Vendor -->
+  <project
+   name="rosand25/vendor_extra"
+   path="vendor/extra"
+   remote="sub"
+   revision="cm-14.1"
+  />
+</manifest>

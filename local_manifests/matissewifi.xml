@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <!-- Device -->
+  <project
+   name="rosand25/android_device_samsung_matissewifi"
+   path="device/samsung/matissewifi"
+   remote="dan"
+   revision="cm-14.1"
+  />
+</manifest>

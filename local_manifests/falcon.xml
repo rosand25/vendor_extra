@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <!-- Device -->
+  <project
+   name="sub77/android_device_motorola_falcon"
+   path="device/motorola/falcon"
+   remote="sub"
+   revision="android-7.1"
+  />
+</manifest>
