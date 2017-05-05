@@ -518,7 +518,7 @@ function repo()
             ${repo_sync}
         fi
   else
-    /home/sub77/bin/repo $1
+    /home/daniel/bin/repo $1
   fi
 }
 
