@@ -1,7 +1,7 @@
 ccache_use=1
 ccache_dir=/roms/ccache
-ccache_size=20
-java_home=/usr/lib/jvm/java-8-openjdk
+ccache_size=25
+java_home=/usr/lib/jvm/java-8-oracle
 rom_type=omni
 with_su=0
 repo_sync="/home/sub77/bin/repo sync -c -f -j8 --force-sync --no-clone-bundle --no-tags"
