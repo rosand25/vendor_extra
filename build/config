@@ -1,10 +1,10 @@
 ccache_use=1
 ccache_dir=/roms/ccache
 ccache_size=25
-java_home=/usr/lib/jvm/java-8-oracle
+java_home=/usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
 rom_type=omni
 with_su=0
-repo_sync="/home/sub77/bin/repo sync -c -f -j8 --force-sync --no-clone-bundle --no-tags"
+repo_sync="/home/rosand25/bin/repo sync -c -f -j8 --force-sync --no-clone-bundle --no-tags"
 have_sdclang=1
 path_sdclang="vendor/extra/toolchain/sdclang-3.8/bin"
 sdclang_lto_defs="vendor/extra/toolchain/sdllvm-lto-defs.mk"
