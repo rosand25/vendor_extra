@@ -1,7 +1,9 @@
-From de5799e372cf4c8207ac6c68a1f457aee2d57942 Mon Sep 17 00:00:00 2001
+From 15d86c1fac355d86e1f71dd6359ec4043811b041 Mon Sep 17 00:00:00 2001
 From: sub77 <sub77@ymail.com>
-Date: Fri, 31 Mar 2017 10:10:03 +0000
-Subject: [PATCH 3/4] Add changelog
+Date: Fri, 5 May 2017 23:56:09 +0000
+Subject: [PATCH 3/3] Add changelog
+
+Change-Id: Ice5529a11f857103580d6183a03fd9bc5662c3bd
 ---
  res/values/custom_strings.xml           |  5 ++
  res/xml/device_info_settings.xml        |  7 +++
@@ -10,10 +12,10 @@ Subject: [PATCH 3/4] Add changelog
  create mode 100644 src/com/android/settings/Changelog.java
 
 diff --git a/res/values/custom_strings.xml b/res/values/custom_strings.xml
-index a06486f6bf..01efa9797d 100644
+index f3349d6ed..98e9b0064 100644
 --- a/res/values/custom_strings.xml
 +++ b/res/values/custom_strings.xml
-@@ -122,4 +122,9 @@
+@@ -120,4 +120,9 @@
      <!-- SD Clang version -->
      <string name="sdc_version">Clang</string>
      <string name="sdc_version_default">None</string>
@@ -24,7 +26,7 @@ index a06486f6bf..01efa9797d 100644
 +    <string name="changelog_error">Unable to load changelog</string>
  </resources>
 diff --git a/res/xml/device_info_settings.xml b/res/xml/device_info_settings.xml
-index bc8a8f8181..ce33266a78 100644
+index bc8a8f818..ce33266a7 100644
 --- a/res/xml/device_info_settings.xml
 +++ b/res/xml/device_info_settings.xml
 @@ -25,6 +25,13 @@
@@ -43,7 +45,7 @@ index bc8a8f8181..ce33266a78 100644
                  android:title="@string/system_update_settings_list_item_title"
 diff --git a/src/com/android/settings/Changelog.java b/src/com/android/settings/Changelog.java
 new file mode 100644
-index 0000000000..2380efedfc
+index 000000000..2380efedf
 --- /dev/null
 +++ b/src/com/android/settings/Changelog.java
 @@ -0,0 +1,81 @@
@@ -130,4 +132,3 @@ index 0000000000..2380efedfc
 +}
 -- 
 2.12.2
-
