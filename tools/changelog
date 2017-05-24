@@ -2,7 +2,7 @@
 
 # Exports
 
-. $REPO_HOME/vendor/extra/tools/colors
+. vendor/extra/tools/colors
 
 export Changelog=Changelog.txt
 
