@@ -1,7 +1,9 @@
-From 8912bbb2cee063c74e233c0442c3f1fb9cffb54d Mon Sep 17 00:00:00 2001
+From 77a7e020b4bd1404d8be1a6baee65822e21264a0 Mon Sep 17 00:00:00 2001
 From: sub77 <sub77@ymail.com>
-Date: Sat, 15 Apr 2017 10:33:09 +0000
-Subject: [PATCH 2/4] Display Snapdragon Clang version if present
+Date: Fri, 5 May 2017 23:48:10 +0000
+Subject: [PATCH 2/3] Display-Snapdragon-Clang-version-if-present
+
+Change-Id: If8bff333758c06e7c4b7b44b19aa25fbed6dd629
 ---
  res/values/custom_strings.xml                    |  4 ++++
  res/xml/device_info_settings.xml                 | 10 +++++++++-
@@ -9,20 +11,20 @@ Subject: [PATCH 2/4] Display Snapdragon Clang version if present
  3 files changed, 20 insertions(+), 1 deletion(-)
 
 diff --git a/res/values/custom_strings.xml b/res/values/custom_strings.xml
-index db9b250aa1..a06486f6bf 100644
+index f54655f68..f3349d6ed 100644
 --- a/res/values/custom_strings.xml
 +++ b/res/values/custom_strings.xml
-@@ -118,4 +118,8 @@
-     <string name="heads_up_notifications_enabled_summary">Allow or disable peeking for all notifications</string>
+@@ -116,4 +116,8 @@
  
-     <string name="easter_settings_title">Happy Easter</string>
+     <string name="heads_up_notifications_enabled_title">Allow peeking</string>
+     <string name="heads_up_notifications_enabled_summary">Allow or disable peeking for all notifications</string>
 +
 +    <!-- SD Clang version -->
 +    <string name="sdc_version">Clang</string>
 +    <string name="sdc_version_default">None</string>
  </resources>
 diff --git a/res/xml/device_info_settings.xml b/res/xml/device_info_settings.xml
-index 7d92fa91a4..bc8a8f8181 100644
+index 7d92fa91a..bc8a8f818 100644
 --- a/res/xml/device_info_settings.xml
 +++ b/res/xml/device_info_settings.xml
 @@ -23,7 +23,7 @@
@@ -47,6 +49,42 @@ index 7d92fa91a4..bc8a8f8181 100644
 +                android:summary="@string/sdc_version_default" />
 +
          <!-- Security patch level -->
+         <PreferenceScreen android:key="security_patch"
+                 android:title="@string/security_patch"
+diff --git a/src/com/android/settings/DeviceInfoSettings.java b/src/com/android/settings/DeviceInfoSettings.java
+index 0bedd65df..e1df58f8b 100644
+--- a/src/com/android/settings/DeviceInfoSettings.java
++++ b/src/com/android/settings/DeviceInfoSettings.java
+@@ -72,6 +72,8 @@ public class DeviceInfoSettings extends SettingsPreferenceFragment implements In
+     private static final String KEY_DEVICE_FEEDBACK = "device_feedback";
+     private static final String KEY_SAFETY_LEGAL = "safetylegal";
+     private static final String KEY_MOD_VERSION = "mod_version";
++    private static final String KEY_SDC_VERSION = "sdc_version";
++    private static final String PROPERTY_SDC_VERSION = "ro.sdc.version";
+ 
+     static final int TAPS_TO_BE_A_DEVELOPER = 7;
+ 
+@@ -121,6 +123,7 @@ public class DeviceInfoSettings extends SettingsPreferenceFragment implements In
+         findPreference(KEY_BUILD_NUMBER).setEnabled(true);
+         findPreference(KEY_KERNEL_VERSION).setSummary(DeviceInfoUtils.getFormattedKernelVersion());
+         setValueSummary(KEY_MOD_VERSION, "ro.omni.version");
++        setValueSummary(KEY_SDC_VERSION, "ro.sdc.version");
+ 
+         if (!SELinux.isSELinuxEnabled()) {
+             String status = getResources().getString(R.string.selinux_status_disabled);
+@@ -138,6 +141,10 @@ public class DeviceInfoSettings extends SettingsPreferenceFragment implements In
+         removePreferenceIfPropertyMissing(getPreferenceScreen(), KEY_SAFETY_LEGAL,
+                 PROPERTY_URL_SAFETYLEGAL);
+ 
++        // Remove SD Clang information if property is not present
++        removePreferenceIfPropertyMissing(getPreferenceScreen(), KEY_SDC_VERSION,
++                PROPERTY_SDC_VERSION);
++
+         // Remove Equipment id preference if FCC ID is not set by RIL
+         removePreferenceIfPropertyMissing(getPreferenceScreen(), KEY_EQUIPMENT_ID,
+                 PROPERTY_EQUIPMENT_ID);
+-- 
+2.
          <PreferenceScreen android:key="security_patch"
                  android:title="@string/security_patch"
 diff --git a/src/com/android/settings/DeviceInfoSettings.java b/src/com/android/settings/DeviceInfoSettings.java
@@ -83,4 +121,3 @@ index 0bedd65df2..e1df58f8b3 100644
                  PROPERTY_EQUIPMENT_ID);
 -- 
 2.12.2
-
